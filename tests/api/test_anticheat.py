@@ -36,7 +36,7 @@ async def test_log_cheating_event(client: AsyncClient, user_token_headers: dict,
         json={
             "attempt_id": attempt_id,
             "event_type": "app_exit",
-            "occurred_at": "2024-01-01T12:00:00Z",
+            "occurred_at": "2024-01-01T12:00:00",
             "metadata": {"reason": "Home button pressed"}
         }
     )

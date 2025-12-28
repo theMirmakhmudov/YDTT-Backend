@@ -41,7 +41,7 @@ async def test_login_wrong_password(client: AsyncClient, test_user: User):
 
 
 @pytest.mark.asyncio
-async def test_login_nonexistent_user(client: AsyncClient):
+async def test_login_nonexistent_user(client: AsyncClient, test_db: AsyncSession):
     """Test login with non-existent email fails."""
     response = await client.post(
         "/api/v1/auth/login",
