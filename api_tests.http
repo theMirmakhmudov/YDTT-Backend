@@ -1,0 +1,175 @@
+### Global Variables
+@baseUrl = http://localhost:8000/api/v1
+@contentType = application/json
+
+### 1. Login as Super Admin (Created via initial_data.py)
+# @name loginAdmin
+POST {{baseUrl}}/auth/login
+Content-Type: {{contentType}}
+
+{
+    "email": "admin@ydtt.uz",
+    "password": "admin123"
+}
+
+### Capture Token from Response
+@adminToken = {{loginAdmin.response.body.access_token}}
+
+
+### 2. Get Current Admin Profile
+GET {{baseUrl}}/auth/me
+Authorization: Bearer {{adminToken}}
+
+
+### 3. Create a School
+# @name createSchool
+POST {{baseUrl}}/schools/
+Authorization: Bearer {{adminToken}}
+Content-Type: {{contentType}}
+
+{
+    "name": "Tashkent School #1",
+    "code": "TSH-001",
+    "region": "Tashkent",
+    "district": "Yunusabad",
+    "address": "Amir Temur Street, 10"
+}
+
+@schoolId = {{createSchool.response.body.id}}
+
+
+### 4. Create a Subject
+# @name createSubject
+POST {{baseUrl}}/subjects/
+Authorization: Bearer {{adminToken}}
+Content-Type: {{contentType}}
+
+{
+    "name": "Mathematics",
+    "code": "MATH",
+    "description": "Algebra and Geometry"
+}
+
+@subjectId = {{createSubject.response.body.id}}
+
+
+### 5. Create a Teacher User
+# @name createTeacher
+POST {{baseUrl}}/users/
+Authorization: Bearer {{adminToken}}
+Content-Type: {{contentType}}
+
+{
+    "email": "math.teacher@ydtt.uz",
+    "password": "password123",
+    "first_name": "Aziz",
+    "last_name": "Rahimov",
+    "role": "TEACHER",
+    "school_id": {{schoolId}}
+}
+
+### 6. Login as Teacher
+# @name loginTeacher
+POST {{baseUrl}}/auth/login
+Content-Type: {{contentType}}
+
+{
+    "email": "math.teacher@ydtt.uz",
+    "password": "password123"
+}
+
+@teacherToken = {{loginTeacher.response.body.access_token}}
+
+
+### 7. Create an Exam (Teacher)
+# @name createExam
+POST {{baseUrl}}/exams/
+Authorization: Bearer {{teacherToken}}
+Content-Type: {{contentType}}
+
+{
+    "title": "Math Midterm 2024",
+    "subject_id": {{subjectId}},
+    "duration_minutes": 60,
+    "passing_score": 70,
+    "is_published": true
+}
+
+@examId = {{createExam.response.body.id}}
+
+
+### 8. Add Question to Exam
+POST {{baseUrl}}/exams/{{examId}}/questions
+Authorization: Bearer {{teacherToken}}
+Content-Type: {{contentType}}
+
+{
+    "question_type": "MULTIPLE_CHOICE",
+    "text": "What is 2 + 2?",
+    "points": 5,
+    "options": [
+        {"id": 1, "text": "3"},
+        {"id": 2, "text": "4"},
+        {"id": 3, "text": "5"}
+    ],
+    "correct_answer": "2"
+}
+
+
+### 9. Create a Student User (Admin)
+# @name createStudent
+POST {{baseUrl}}/users/
+Authorization: Bearer {{adminToken}}
+Content-Type: {{contentType}}
+
+{
+    "email": "student1@ydtt.uz",
+    "password": "password123",
+    "first_name": "Ivan",
+    "last_name": "Ivanov",
+    "role": "STUDENT",
+    "school_id": {{schoolId}}
+}
+
+
+### 10. Login as Student
+# @name loginStudent
+POST {{baseUrl}}/auth/login
+Content-Type: {{contentType}}
+
+{
+    "email": "student1@ydtt.uz",
+    "password": "password123"
+}
+
+@studentToken = {{loginStudent.response.body.access_token}}
+
+
+### 11. Start Exam (Student)
+# @name startExam
+POST {{baseUrl}}/exams/{{examId}}/start
+Authorization: Bearer {{studentToken}}
+
+
+### 12. List Exams (Public/Published)
+GET {{baseUrl}}/exams/
+Authorization: Bearer {{studentToken}}
+### 13. Digital Library - Admin Upload Book
+# @name uploadBook
+POST {{baseUrl}}/library/
+Authorization: Bearer {{adminToken}}
+Content-Type: {{contentType}}
+
+{
+    "title": "Algebra Grade 9",
+    "description": "Standard Textbook",
+    "subject_id": {{subjectId}},
+    "grade": 9,
+    "file_path": "s3://books/algebra-9.pdf",
+    "file_size": 2048000
+}
+
+
+### 14. Digital Library - List Books
+GET {{baseUrl}}/library/?subject_id={{subjectId}}
+Authorization: Bearer {{studentToken}}
