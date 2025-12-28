@@ -1,4 +1,4 @@
-name: CI/CD Pipeline
+name: CI Pipeline
 
 on:
   push:
@@ -7,37 +7,29 @@ on:
     branches: [ "main" ]
 
 jobs:
-  test-and-build:
+  ci-tests:
     runs-on: ubuntu-latest
     steps:
+    # 1. Checkout the repository code to the runner
     - name: Checkout code
       uses: actions/checkout@v3
 
+    # 2. Set up Docker Buildx
+    # This installs the modern Docker builder, ensuring cache support and multi-platform capabilities if needed.
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v2
 
+    # 3. Run Integration Tests
+    # This step spins up the full test environment (Postgres, Redis, App) defined in docker-compose.test.yml.
+    # It executes the tests inside the 'app_test' container.
+    #
+    # Flags explanation:
+    #   docker compose: Uses the V2 plugin syntax (standard on GHA) instead of legacy 'docker-compose'.
+    #   -f docker-compose.test.yml: Specifies the test configuration file.
+    #   up: Creates and starts containers.
+    #   --build: Forces a rebuild of the image to ensure the latest code changes are included.
+    #   --abort-on-container-exit: Stops all containers (DB, Redis) as soon as the test container exits.
+    #   --exit-code-from app_test: Uses the exit code of the test container (0=pass, 1=fail) to determine CI success.
     - name: Run Integration Tests
-      # Uses docker-compose.test.yml to spin up Postgres, Redis and App
-      # --abort-on-container-exit stops all containers when app_test finishes
-      # --exit-code-from app_test passes the test result to GHA
       run: |
-        docker-compose -f docker-compose.test.yml up --build --abort-on-container-exit --exit-code-from app_test
-
-    - name: Login to Docker Hub
-      if: github.event_name != 'pull_request'
-      uses: docker/login-action@v2
-      with:
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
-      continue-on-error: true
-
-    - name: Build and Push Production Image
-      if: github.ref == 'refs/heads/main'
-      uses: docker/build-push-action@v4
-      with:
-        context: .
-        push: true # Requires successful login
-        tags: |
-           ${{ secrets.DOCKER_USERNAME }}/ydtt-backend:latest
-           ${{ secrets.DOCKER_USERNAME }}/ydtt-backend:${{ github.sha }}
-      continue-on-error: true
+        docker compose -f docker-compose.test.yml up --build --abort-on-container-exit --exit-code-from app_test
