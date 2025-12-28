@@ -13,8 +13,10 @@ from app.core.database import Base, get_db
 from app.core.security import get_password_hash, create_access_token
 from app.models.user import User, UserRole
 
-# Use SQLite for tests
-TEST_DATABASE_URL = "sqlite+aiosqlite:///./test.db"
+import os
+
+# Use SQLite for tests by default, allow override (e.g. for Docker/CI)
+TEST_DATABASE_URL = os.getenv("TEST_DATABASE_URL", "sqlite+aiosqlite:///./test.db")
 
 
 @pytest.fixture(scope="session")

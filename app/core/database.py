@@ -10,13 +10,23 @@ from app.core.config import settings
 
 
 # Create async engine
+# Create async engine
+engine_kwargs = {
+    "echo": settings.DATABASE_ECHO,
+    "future": True,
+}
+
+# Add pool settings only for PostgreSQL (SQLite doesn't support them)
+if "sqlite" not in settings.DATABASE_URL:
+    engine_kwargs.update({
+        "pool_pre_ping": True,
+        "pool_size": 10,
+        "max_overflow": 20,
+    })
+
 engine = create_async_engine(
     settings.DATABASE_URL,
-    echo=settings.DATABASE_ECHO,
-    future=True,
-    pool_pre_ping=True,
-    pool_size=10,
-    max_overflow=20,
+    **engine_kwargs
 )
 
 # Session factory

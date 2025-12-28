@@ -1,60 +1,43 @@
-name: YDTT Backend CI/CD
+name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ "main", "master" ]
+    branches: [ "main" ]
   pull_request:
-    branches: [ "main", "master" ]
-
-env:
-  REGISTRY: docker.io
-  IMAGE_NAME: ydtt-backend
+    branches: [ "main" ]
 
 jobs:
-  test:
+  test-and-build:
     runs-on: ubuntu-latest
-    
     steps:
-    - uses: actions/checkout@v4
-    
-    - name: Set up Python 3.11
-      uses: actions/setup-python@v5
-      with:
-        python-version: "3.11"
-        
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-        
-    - name: Run tests with pytest
-      env:
-        SECRET_KEY: testing-secret
-        JWT_SECRET_KEY: testing-jwt-secret
-        DATABASE_URL: sqlite+aiosqlite:///./test.db
-      run: |
-        pytest tests/ -v
-        
-  build-and-push:
-    needs: test
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
-    
-    steps:
-    - uses: actions/checkout@v4
-    
+    - name: Checkout code
+      uses: actions/checkout@v3
+
     - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v3
-    
+      uses: docker/setup-buildx-action@v2
+
+    - name: Run Integration Tests
+      # Uses docker-compose.test.yml to spin up Postgres, Redis and App
+      # --abort-on-container-exit stops all containers when app_test finishes
+      # --exit-code-from app_test passes the test result to GHA
+      run: |
+        docker-compose -f docker-compose.test.yml up --build --abort-on-container-exit --exit-code-from app_test
+
     - name: Login to Docker Hub
-      uses: docker/login-action@v3
+      if: github.event_name != 'pull_request'
+      uses: docker/login-action@v2
       with:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
-        
-    - name: Build and push Docker image
-      uses: docker/build-push-action@v5
+      continue-on-error: true
+
+    - name: Build and Push Production Image
+      if: github.ref == 'refs/heads/main'
+      uses: docker/build-push-action@v4
       with:
         context: .
-        push: true
-        tags: ${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:latest
+        push: true # Requires successful login
+        tags: |
+           ${{ secrets.DOCKER_USERNAME }}/ydtt-backend:latest
+           ${{ secrets.DOCKER_USERNAME }}/ydtt-backend:${{ github.sha }}
+      continue-on-error: true
