@@ -111,7 +111,18 @@ async def global_exception_handler(request: Request, exc: Exception):
 
 
 # Register API routers
+# Register API routers
 app.include_router(api_v1_router, prefix=settings.API_V1_PREFIX)
+
+
+# Admin Panel
+from sqladmin import Admin
+from app.admin import authentication_backend
+from app.admin_views import views
+
+admin = Admin(app, engine, authentication_backend=authentication_backend, title="YDTT Admin")
+for view in views:
+    admin.add_view(view)
 
 
 # Health check endpoint
