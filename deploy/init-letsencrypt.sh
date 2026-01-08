@@ -43,7 +43,9 @@ echo
 
 echo "### Starting nginx ..."
 docker compose up --force-recreate -d nginx
-echo
+echo "### Waiting for Nginx to fully start..."
+sleep 10
+
 
 echo "### Deleting dummy certificate for $domains ..."
 docker compose run --rm --entrypoint "\
