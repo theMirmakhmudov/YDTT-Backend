@@ -13,13 +13,9 @@ data_path="./data/certbot"
 email="${SSL_EMAIL}" # Using env var from shell
 staging=0 # Set to 1 if you're testing your setup to avoid hitting request limits
 
-if [ -d "$data_path" ]; then
-  read -p "Existing data found for $domains. Continue and replace existing certificate? (y/N) " decision
-  if [ "$decision" != "Y" ] && [ "$decision" != "y" ]; then
-    exit
-  fi
-fi
-
+# Automatic execution: We assume if this script is run, we want to regenerate/init.
+# Removing interactive check for CI/CD compatibility.
+# if [ -d "$data_path" ]; then ... fi
 
 if [ ! -e "$data_path/conf/options-ssl-nginx.conf" ] || [ ! -e "$data_path/conf/ssl-dhparams.pem" ]; then
   echo "### Downloading recommended TLS parameters ..."
