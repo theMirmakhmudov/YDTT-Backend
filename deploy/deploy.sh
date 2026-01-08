@@ -24,6 +24,19 @@ docker compose pull
 echo "🔥 Starting services..."
 docker compose up -d --remove-orphans
 
+# 5. Check for SSL Certificates & Initialize if missing (First Run Automation)
+CERT_FILE="./data/certbot/conf/live/$DOMAIN/fullchain.pem"
+if [ ! -f "$CERT_FILE" ]; then
+    echo "⚠️ SSL Certificates not found for $DOMAIN. Running initialization script..."
+    echo "⏳ This may take a minute..."
+    chmod +x init-letsencrypt.sh
+    # Run in non-interactive mode (though script acts non-interactively if data dir missing)
+    ./init-letsencrypt.sh
+    echo "✅ SSL Initialization passed."
+else
+    echo "✅ SSL Certificates found. Skipping initialization."
+fi
+
 # 5. Prune old images to save space
 echo "🧹 Cleaning up..."
 docker image prune -f
