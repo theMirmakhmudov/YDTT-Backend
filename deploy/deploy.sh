@@ -20,7 +20,13 @@ docker compose pull
 # 3. Stop old containers (optional, usually up -d handles recreation)
 # docker compose down
 
-# 4. Start new containers
+# 4. Preparing Configuration
+echo "⚙️  Generating Nginx configuration..."
+# Manually substitute environment variables using sed to avoid Docker template issues
+# We use | as delimiter to handle potential slashes in variables safely
+sed "s|\${DOMAIN}|${DOMAIN}|g" nginx.conf > nginx.final.conf
+
+# 5. Start new containers
 echo "🔥 Starting services..."
 docker compose up -d --remove-orphans
 
