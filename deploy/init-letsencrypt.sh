@@ -46,6 +46,27 @@ docker compose up --force-recreate -d nginx
 echo "### Waiting for Nginx to fully start..."
 sleep 10
 
+echo "### DIAGNOSTIC: Testing Nginx configuration locally..."
+mkdir -p "$data_path/www/.well-known/acme-challenge"
+echo "success" > "$data_path/www/.well-known/acme-challenge/test-challenge.txt"
+chmod 644 "$data_path/www/.well-known/acme-challenge/test-challenge.txt"
+
+echo "Attempting to fetch test file internally..."
+# Use docker exec to curl from inside the nginx container (or app container) simply to test routing
+# Since nginx container minimal, we use curl from host against localhost:80
+HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" -H "Host: ${domains}" http://localhost/.well-known/acme-challenge/test-challenge.txt)
+
+if [ "$HTTP_STATUS" == "200" ]; then
+    echo "✅ Diagnostic Passed: Nginx is serving challenge files correctly."
+else
+    echo "❌ Diagnostic Failed: Local test returned HTTP $HTTP_STATUS"
+    echo "Debug: Check permissions on $data_path/www"
+    ls -laR "$data_path/www"
+    echo "Skipping Certbot to avoid rate limits until fixed."
+    exit 1
+fi
+
+
 
 echo "### Deleting dummy certificate for $domains ..."
 docker compose run --rm --entrypoint "\
