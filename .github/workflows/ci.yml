@@ -149,6 +149,7 @@ jobs:
           cp docker-compose.prod.yml deploy_bundle/docker-compose.yml
           cp deploy/nginx.conf deploy_bundle/nginx.conf
           cp deploy/deploy.sh deploy_bundle/deploy.sh
+          cp deploy/init-letsencrypt.sh deploy_bundle/init-letsencrypt.sh
           mv .env deploy_bundle/.env
           
           # Create tarball
@@ -201,6 +202,10 @@ jobs:
             mv /tmp/deploy_extracted/nginx.conf \$APP_DIR/nginx.conf
             mv /tmp/deploy_extracted/.env \$APP_DIR/.env
             mv /tmp/deploy_extracted/deploy.sh \$APP_DIR/deploy.sh
+            mv /tmp/deploy_extracted/init-letsencrypt.sh \$APP_DIR/init-letsencrypt.sh
+            
+            # Make init script executable
+            chmod +x \$APP_DIR/init-letsencrypt.sh
             
             # Cleanup temp
             rm -rf /tmp/deploy_extracted /tmp/deploy.tar.gz
