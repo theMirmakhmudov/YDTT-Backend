@@ -1,6 +1,11 @@
 #!/bin/bash
 set -e
 
+# Load environment variables from .env
+if [ -f .env ]; then
+  export $(cat .env | xargs)
+fi
+
 # Parameters
 domains="${DOMAIN}" # Using env var from shell
 rsa_key_size=4096
