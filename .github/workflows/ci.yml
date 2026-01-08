@@ -184,7 +184,10 @@ jobs:
           # 2. Run deploy script
           ssh -o StrictHostKeyChecking=no -o ServerAliveInterval=60 -o ServerAliveCountMax=30 $USER@$HOST "
             # Setup vars
-            APP_DIR=~/ydtt-backend
+            # NOTE: Ensure this directory exists and is owned by your user:
+            # sudo mkdir -p /opt/ydtt-backend && sudo chown $USER:$USER /opt/ydtt-backend
+            APP_DIR=/opt/ydtt-backend
+            OLD_DIR=~/ydtt-backend
             
             # Prepare directory
             mkdir -p \$APP_DIR
@@ -193,7 +196,7 @@ jobs:
             # Extract
             tar -xzf /tmp/deploy.tar.gz -C /tmp/deploy_extracted
             
-            # Move to app dir
+            # Move to clean app dir location
             mv /tmp/deploy_extracted/docker-compose.yml \$APP_DIR/docker-compose.yml
             mv /tmp/deploy_extracted/nginx.conf \$APP_DIR/nginx.conf
             mv /tmp/deploy_extracted/.env \$APP_DIR/.env
@@ -202,6 +205,11 @@ jobs:
             # Cleanup temp
             rm -rf /tmp/deploy_extracted /tmp/deploy.tar.gz
             
+            # Cleanup old directory if it exists (one-time migration advice)
+            if [ -d \"\$OLD_DIR\" ]; then
+               echo \"⚠️ Found old deployment at \$OLD_DIR. You may safely delete it manually with 'rm -rf \$OLD_DIR' after verification.\"
+            fi
+
             # Exec from correct dir
             cd \$APP_DIR
             bash deploy.sh '${GITHUB_TOKEN}' '${GITHUB_ACTOR}' '${DOMAIN}' '${SSL_EMAIL}'
