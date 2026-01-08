@@ -60,8 +60,18 @@ if [ "$HTTP_STATUS" == "200" ]; then
     echo "✅ Diagnostic Passed: Nginx is serving challenge files correctly."
 else
     echo "❌ Diagnostic Failed: Local test returned HTTP $HTTP_STATUS"
-    echo "Debug: Check permissions on $data_path/www"
-    ls -laR "$data_path/www"
+    
+    echo "--- DEBUG START ---"
+    echo "1. Verifying file inside container..."
+    docker compose exec nginx ls -la /var/www/certbot/.well-known/acme-challenge/test-challenge.txt || echo "FILE NOT FOUND IN CONTAINER"
+    
+    echo "2. Checking Nginx Configuration (Envsubst result)..."
+    docker compose exec nginx nginx -T | grep -A 10 "server_name"
+    
+    echo "3. Nginx Error Log (Last 5 lines)..."
+    docker compose exec nginx tail -n 5 /var/log/nginx/error.log
+    echo "--- DEBUG END ---"
+    
     echo "Skipping Certbot to avoid rate limits until fixed."
     exit 1
 fi
