@@ -25,6 +25,11 @@ if [ ! -e "$data_path/conf/options-ssl-nginx.conf" ] || [ ! -e "$data_path/conf/
   echo
 fi
 
+echo "### Ensuring permissions for webroot ..."
+mkdir -p "$data_path/www"
+# Ensure everyone can read/traverse so Nginx (user 101) can find the challenge
+chmod -R 755 "$data_path/www"
+
 echo "### Creating dummy certificate for $domains ..."
 path="/etc/letsencrypt/live/$domains"
 mkdir -p "$data_path/conf/live/$domains"
