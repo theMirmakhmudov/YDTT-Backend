@@ -183,12 +183,26 @@ jobs:
           # 1. Extract tarball
           # 2. Run deploy script
           ssh -o StrictHostKeyChecking=no -o ServerAliveInterval=60 -o ServerAliveCountMax=30 $USER@$HOST "
-            mkdir -p /tmp/deploy_extracted &&
-            tar -xzf /tmp/deploy.tar.gz -C /tmp/deploy_extracted &&
-            mv /tmp/deploy_extracted/docker-compose.yml /tmp/docker-compose.yml &&
-            mv /tmp/deploy_extracted/nginx.conf /tmp/nginx.conf &&
-            mv /tmp/deploy_extracted/.env /tmp/.env &&
-            mv /tmp/deploy_extracted/deploy.sh /tmp/deploy.sh &&
-            rm -rf /tmp/deploy_extracted /tmp/deploy.tar.gz &&
-            bash /tmp/deploy.sh '${GITHUB_TOKEN}' '${GITHUB_ACTOR}' '${DOMAIN}' '${SSL_EMAIL}'
+            # Setup vars
+            APP_DIR=~/ydtt-backend
+            
+            # Prepare directory
+            mkdir -p \$APP_DIR
+            mkdir -p /tmp/deploy_extracted
+
+            # Extract
+            tar -xzf /tmp/deploy.tar.gz -C /tmp/deploy_extracted
+            
+            # Move to app dir
+            mv /tmp/deploy_extracted/docker-compose.yml \$APP_DIR/docker-compose.yml
+            mv /tmp/deploy_extracted/nginx.conf \$APP_DIR/nginx.conf
+            mv /tmp/deploy_extracted/.env \$APP_DIR/.env
+            mv /tmp/deploy_extracted/deploy.sh \$APP_DIR/deploy.sh
+            
+            # Cleanup temp
+            rm -rf /tmp/deploy_extracted /tmp/deploy.tar.gz
+            
+            # Exec from correct dir
+            cd \$APP_DIR
+            bash deploy.sh '${GITHUB_TOKEN}' '${GITHUB_ACTOR}' '${DOMAIN}' '${SSL_EMAIL}'
           "
