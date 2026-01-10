@@ -104,30 +104,21 @@ async def create_school(
     db: Annotated[AsyncSession, Depends(get_db)],
 ):
     """Create a new school. Requires region admin or higher."""
-    # Auto-generate school code if not provided
-    if not school_data.code:
-        # Generate code from school name and region (e.g., TASHKENT_SCHOOL_001)
-        # Get count of schools in the region for sequential numbering
-        count_query = select(func.count(School.id)).where(
-            School.region == school_data.region,
-            School.is_deleted == False
-        )
-        count_result = await db.execute(count_query)
-        school_count = count_result.scalar() + 1
-        
-        # Generate code: REGION_SCH_NNN format
-        region_prefix = school_data.region.upper().replace(" ", "_")[:10]
-        school_data.code = f"{region_prefix}_SCH_{school_count:03d}"
+    # Auto-generate school code based on region
+    # Get count of schools in the region for sequential numbering
+    count_query = select(func.count(School.id)).where(
+        School.region == school_data.region,
+        School.is_deleted == False
+    )
+    count_result = await db.execute(count_query)
+    school_count = count_result.scalar() + 1
     
-    # Check code uniqueness
-    result = await db.execute(select(School).where(School.code == school_data.code))
-    if result.scalar_one_or_none():
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="School code already exists",
-        )
+    # Generate code: REGION_SCH_NNN format
+    region_prefix = school_data.region.upper().replace(" ", "_")[:10]
+    generated_code = f"{region_prefix}_SCH_{school_count:03d}"
     
-    new_school = School(**school_data.model_dump())
+    # Create school with generated code
+    new_school = School(**school_data.model_dump(), code=generated_code)
     db.add(new_school)
     await db.flush()
     
@@ -400,15 +391,18 @@ async def create_subject(
     db: Annotated[AsyncSession, Depends(get_db)],
 ):
     """Create a new subject. Requires region admin or higher."""
-    # Check code uniqueness
-    result = await db.execute(select(Subject).where(Subject.code == subject_data.code))
-    if result.scalar_one_or_none():
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Subject code already exists",
-        )
+    # Auto-generate subject code based on name
+    # Get total count for sequential numbering
+    count_query = select(func.count(Subject.id))
+    count_result = await db.execute(count_query)
+    subject_count = count_result.scalar() + 1
     
-    new_subject = Subject(**subject_data.model_dump())
+    # Generate code from subject name: SUBJ_NAME_NNN format
+    name_prefix = subject_data.name.upper().replace(" ", "_")[:15]
+    generated_code = f"{name_prefix}_{subject_count:03d}"
+    
+    # Create subject with generated code
+    new_subject = Subject(**subject_data.model_dump(), code=generated_code)
     db.add(new_subject)
     await db.commit()
     await db.refresh(new_subject)

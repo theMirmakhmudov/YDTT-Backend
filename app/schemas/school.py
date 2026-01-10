@@ -22,7 +22,7 @@ class SchoolBase(BaseModel):
 
 class SchoolCreate(SchoolBase):
     """Schema for creating a school."""
-    code: Optional[str] = Field(None, max_length=50)  # Auto-generated if not provided
+    pass  # code will be auto-generated
 
 
 class SchoolUpdate(BaseModel):
@@ -116,13 +116,12 @@ class ClassListResponse(BaseModel):
 class SubjectBase(BaseModel):
     """Base subject schema."""
     name: str = Field(max_length=200)
-    code: str = Field(max_length=50)
     description: Optional[str] = None
 
 
 class SubjectCreate(SubjectBase):
     """Schema for creating a subject."""
-    pass
+    pass  # code will be auto-generated
 
 
 class SubjectUpdate(BaseModel):
