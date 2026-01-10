@@ -43,7 +43,15 @@ else
     echo "✅ SSL Certificates found. Skipping initialization."
 fi
 
-# 5. Prune old images to save space
+# 6. Run Database Migrations
+echo "📊 Running database migrations..."
+docker compose exec -T app alembic upgrade head
+
+# 7. Create Initial Superuser
+echo "👤 Creating initial superuser (if needed)..."
+docker compose exec -T app python -m app.initial_data
+
+# 8. Prune old images to save space
 echo "🧹 Cleaning up..."
 docker image prune -f
 
