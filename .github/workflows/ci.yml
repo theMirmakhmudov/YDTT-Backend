@@ -115,6 +115,8 @@ jobs:
           MINIO_ROOT_PASSWORD: ${{ secrets.MINIO_ROOT_PASSWORD }}
           # Docker image
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          FIRST_SUPERUSER: ${{ secrets.FIRST_SUPERUSER }}
+          FIRST_SUPERUSER_PASSWORD: ${{ secrets.FIRST_SUPERUSER_PASSWORD }}
         run: |
           set -e
           echo "✅ Preparing deployment files..."
@@ -136,6 +138,8 @@ jobs:
           MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
           IMAGE_TAG=${IMAGE_TAG}
           DOMAIN=${DOMAIN}
+          FIRST_SUPERUSER=${FIRST_SUPERUSER}
+          FIRST_SUPERUSER_PASSWORD=${FIRST_SUPERUSER_PASSWORD}
           EOT
           
           # Make scripts executable

@@ -17,6 +17,10 @@ class Settings(BaseSettings):
     DEBUG: bool = False
     SECRET_KEY: str = "change-me-in-production"
     API_V1_PREFIX: str = "/api/v1"
+
+    # Initial Superuser
+    FIRST_SUPERUSER: str = "admin@ydtt.uz"
+    FIRST_SUPERUSER_PASSWORD: str = "admin123"
     
     # Database
     DATABASE_URL: str = "postgresql+asyncpg://ydtt_user:ydtt_password@localhost:5432/ydtt_core"

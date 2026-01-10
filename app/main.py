@@ -93,19 +93,17 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
     """Global exception handler."""
-    if settings.DEBUG:
-        return JSONResponse(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            content={
-                "error": "Internal server error",
-                "detail": str(exc),
-            },
-        )
+    # Always return detailed errors as requested by user
+    error_type = type(exc).__name__
+    error_msg = str(exc)
+    
     return JSONResponse(
         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         content={
-            "error": "Internal server error",
-            "detail": "An unexpected error occurred",
+            "error": "Internal Server Error",
+            "type": error_type,
+            "detail": error_msg,
+            "path": request.url.path
         },
     )
 

@@ -7,6 +7,7 @@ import logging
 from sqlalchemy import select
 
 from app.core.database import async_session_maker
+from app.core.config import settings
 from app.core.security import get_password_hash
 from app.models.user import User, UserRole
 
@@ -20,18 +21,18 @@ async def create_initial_data() -> None:
     
     async with async_session_maker() as session:
         # Check if admin exists
-        stmt = select(User).where(User.email == "admin@ydtt.uz")
+        stmt = select(User).where(User.email == settings.FIRST_SUPERUSER)
         result = await session.execute(stmt)
         user = result.scalar_one_or_none()
         
         if user:
-            logger.info("Admin user already exists.")
+            logger.info(f"Admin user {settings.FIRST_SUPERUSER} already exists.")
             return
 
         # Create admin
         admin = User(
-            email="admin@ydtt.uz",
-            hashed_password=get_password_hash("admin123"),
+            email=settings.FIRST_SUPERUSER,
+            hashed_password=get_password_hash(settings.FIRST_SUPERUSER_PASSWORD),
             first_name="Admin",
             last_name="User",
             role=UserRole.SUPER_ADMIN,
@@ -42,8 +43,8 @@ async def create_initial_data() -> None:
         await session.commit()
         
         logger.info("Superuser created successfully.")
-        logger.info("Email: admin@ydtt.uz")
-        logger.info("Password: admin123")
+        logger.info(f"Email: {settings.FIRST_SUPERUSER}")
+        logger.info("Password: [HIDDEN]")
 
 
 if __name__ == "__main__":
