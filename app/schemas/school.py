@@ -11,17 +11,18 @@ from pydantic import BaseModel, Field, EmailStr
 class SchoolBase(BaseModel):
     """Base school schema."""
     name: str = Field(max_length=255)
-    code: str = Field(max_length=50)
     region: str = Field(max_length=100)
     district: str = Field(max_length=100)
     address: Optional[str] = None
     phone: Optional[str] = Field(None, max_length=20)
     email: Optional[EmailStr] = None
+    director_name: Optional[str] = Field(None, max_length=255)
+    capacity: Optional[int] = Field(None, ge=0)
 
 
 class SchoolCreate(SchoolBase):
     """Schema for creating a school."""
-    pass
+    code: Optional[str] = Field(None, max_length=50)  # Auto-generated if not provided
 
 
 class SchoolUpdate(BaseModel):
@@ -32,6 +33,8 @@ class SchoolUpdate(BaseModel):
     address: Optional[str] = None
     phone: Optional[str] = Field(None, max_length=20)
     email: Optional[EmailStr] = None
+    director_name: Optional[str] = Field(None, max_length=255)
+    capacity: Optional[int] = Field(None, ge=0)
     is_active: Optional[bool] = None
 
 
@@ -45,6 +48,8 @@ class SchoolResponse(BaseModel):
     address: Optional[str] = None
     phone: Optional[str] = None
     email: Optional[str] = None
+    director_name: Optional[str] = None
+    capacity: Optional[int] = None
     is_active: bool
     created_at: datetime
     updated_at: datetime

@@ -33,6 +33,10 @@ class School(Base):
     phone: Mapped[Optional[str]] = mapped_column(String(20), nullable=True)
     email: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
     
+    # Management
+    director_name: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+    capacity: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)  # Student capacity
+    
     # Status
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     is_deleted: Mapped[bool] = mapped_column(Boolean, default=False)
