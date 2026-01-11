@@ -13,7 +13,6 @@ async def test_create_school_admin(client: AsyncClient, admin_token_headers: dic
         headers=admin_token_headers,
         json={
             "name": "Test School #1",
-            "code": "SCH-001",
             "region": "Tashkent",
             "district": "Yunusabad",
             "address": "123 Street"
@@ -22,7 +21,7 @@ async def test_create_school_admin(client: AsyncClient, admin_token_headers: dic
     assert response.status_code == 201
     data = response.json()
     assert data["name"] == "Test School #1"
-    assert data["code"] == "SCH-001"
+    assert data["code"] == "TASHKENT_SCH_001"  # Auto-generated
     return data["id"]
 
 
@@ -36,7 +35,6 @@ async def test_create_class_admin(client: AsyncClient, admin_token_headers: dict
         headers=school_headers,
         json={
             "name": "Test School #2",
-            "code": "SCH-002",
             "region": "Tashkent",
             "district": "Mirzo Ulugbek"
         }
@@ -68,11 +66,10 @@ async def test_create_subject(client: AsyncClient, admin_token_headers: dict):
         headers=admin_token_headers,
         json={
             "name": "Mathematics",
-            "code": "MATH-101",
             "description": "Basic Algebra"
         }
     )
     assert response.status_code == 201
     data = response.json()
     assert data["name"] == "Mathematics"
-    assert data["code"] == "MATH-101"
+    assert data["code"] == "MATHEMATICS_001"  # Auto-generated
