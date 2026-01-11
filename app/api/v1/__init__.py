@@ -3,7 +3,7 @@ API v1 router initialization.
 """
 from fastapi import APIRouter
 
-from app.api.v1 import auth, users, schools, lessons, exams, anti_cheat, sync, notifications, progress, library
+from app.api.v1 import auth, users, schools, lessons, exams, anti_cheat, sync, notifications, progress, library, journal, timetable, assignments
 
 
 router = APIRouter()
@@ -19,3 +19,6 @@ router.include_router(sync.router)
 router.include_router(notifications.router)
 router.include_router(progress.router)
 router.include_router(library.router)
+router.include_router(journal.router)
+router.include_router(timetable.router)
+router.include_router(assignments.router)
