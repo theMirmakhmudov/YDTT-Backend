@@ -167,11 +167,12 @@ async def seed_database():
         first_names = ["Ali", "Jasur", "Malika", "Dilnoza", "Bobur", "Zilola", "Akmal", "Sevara"]
         last_names = ["Rahimov", "Karimov", "Azimov", "Usmanov", "Sharipov", "Nazarov"]
         
+        student_counter = 0  # Global counter to ensure unique emails
         for cls in classes[:2]:  # Only first 2 classes
             for i in range(10):  # 10 students per class
                 first = first_names[i % len(first_names)]
                 last = last_names[i % len(last_names)]
-                email = f"{first.lower()}.{last.lower()}.{i}@student.ydtt.uz"
+                email = f"{first.lower()}.{last.lower()}.{student_counter}@student.ydtt.uz"
                 
                 result = await db.execute(select(User).where(User.email == email))
                 existing = result.scalar_one_or_none()
@@ -185,12 +186,14 @@ async def seed_database():
                         role=UserRole.STUDENT,
                         school_id=school.id,
                         class_id=cls.id,
-                        phone=f"+99891{len(students):07d}"
+                        phone=f"+99891{student_counter:07d}"
                     )
                     db.add(student)
                     students.append(student)
                 else:
                     students.append(existing)
+                
+                student_counter += 1  # Increment for each student
         
         await db.flush()
         print(f"   ✓ Created {len(students)} students")
