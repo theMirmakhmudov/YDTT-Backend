@@ -32,6 +32,10 @@ sed -e "s|\${API_DOMAIN}|${DOMAIN}|g" \
 echo "🛑 Stopping old containers..."
 docker compose down --remove-orphans
 
+# Force remove any orphaned nginx container (from previous failed deployments)
+echo "🧹 Cleaning up orphaned containers..."
+docker rm -f ydtt-nginx 2>/dev/null || true
+
 # 6. Start new containers
 echo "🔥 Starting services..."
 docker compose up -d --remove-orphans
