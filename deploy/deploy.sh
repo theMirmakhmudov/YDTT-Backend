@@ -24,7 +24,9 @@ docker compose pull
 echo "⚙️  Generating Nginx configuration..."
 # Manually substitute environment variables using sed to avoid Docker template issues
 # We use | as delimiter to handle potential slashes in variables safely
-sed "s|\${DOMAIN}|${DOMAIN}|g" nginx.conf > nginx.final.conf
+sed -e "s|\${API_DOMAIN}|${DOMAIN}|g" \
+    -e "s|\${ADMIN_DOMAIN}|admin.ydtt.uz|g" \
+    nginx.conf > nginx.final.conf
 
 # 5. Start new containers
 echo "🔥 Starting services..."
