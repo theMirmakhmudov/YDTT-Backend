@@ -28,7 +28,11 @@ sed -e "s|\${API_DOMAIN}|${DOMAIN}|g" \
     -e "s|\${ADMIN_DOMAIN}|admin.ydtt.uz|g" \
     nginx.conf > nginx.final.conf
 
-# 5. Start new containers
+# 5. Stop and remove old containers cleanly
+echo "🛑 Stopping old containers..."
+docker compose down --remove-orphans
+
+# 6. Start new containers
 echo "🔥 Starting services..."
 docker compose up -d --remove-orphans
 
