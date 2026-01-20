@@ -9,8 +9,10 @@ from pydantic import BaseModel, Field
 
 
 class LessonSessionStatus(str, Enum):
+    PENDING = "PENDING"
     ACTIVE = "ACTIVE"
     ENDED = "ENDED"
+    CANCELLED = "CANCELLED"
 
 
 # --- LessonSession Schemas ---
@@ -33,6 +35,7 @@ class LessonSessionResponse(BaseModel):
     # Extra info for display
     subject_name: Optional[str] = None
     class_name: Optional[str] = None
+    participant_count: int = 0
     
     class Config:
         from_attributes = True

@@ -20,8 +20,10 @@ if TYPE_CHECKING:
 
 class LessonSessionStatus(str, PyEnum):
     """Status of a lesson session."""
+    PENDING = "PENDING"
     ACTIVE = "ACTIVE"
     ENDED = "ENDED"
+    CANCELLED = "CANCELLED"
 
 
 class LessonSession(Base):
@@ -40,7 +42,7 @@ class LessonSession(Base):
     subject_id: Mapped[int] = mapped_column(ForeignKey("subjects.id"), index=True)
     
     # Status
-    status: Mapped[LessonSessionStatus] = mapped_column(Enum(LessonSessionStatus), default=LessonSessionStatus.ACTIVE)
+    status: Mapped[LessonSessionStatus] = mapped_column(Enum(LessonSessionStatus), default=LessonSessionStatus.PENDING)
     
     # Timing
     started_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)

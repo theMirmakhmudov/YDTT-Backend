@@ -39,6 +39,10 @@ Government-scale education platform backend providing:
 - **User Management**: Students, teachers, and administrators
 - **School Structure**: Schools, classes, subjects organization
 - **Learning Content**: Lessons and materials with versioning
+- **Live Sessions**: Real-time digital classroom with WebSocket support
+- **Automatic Attendance**: Session-based attendance tracking
+- **Interactive Whiteboard**: Teacher-to-student real-time drawing
+- **Session Materials**: Auto-linked learning resources
 - **Exam System**: Automated assessment with multiple question types
 - **Anti-Cheating**: Event logging and risk scoring
 - **Offline Sync**: Offline-first data synchronization

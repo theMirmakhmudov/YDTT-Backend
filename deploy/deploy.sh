@@ -25,7 +25,6 @@ echo "⚙️  Generating Nginx configuration..."
 # Manually substitute environment variables using sed to avoid Docker template issues
 # We use | as delimiter to handle potential slashes in variables safely
 sed -e "s|\${API_DOMAIN}|${DOMAIN}|g" \
-    -e "s|\${ADMIN_DOMAIN}|admin.ydtt.uz|g" \
     nginx.conf > nginx.final.conf
 
 # 5. Stop and remove old containers cleanly

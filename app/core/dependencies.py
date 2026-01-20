@@ -98,3 +98,51 @@ async def get_accept_language(
 CurrentUser = Annotated[User, Depends(get_current_active_user)]
 DBSession = Annotated[AsyncSession, Depends(get_db)]
 Language = Annotated[str, Depends(get_accept_language)]
+
+
+# Permission dependencies
+async def get_session_or_404(
+    session_id: int,
+    db: DBSession
+):
+    from app.models.lesson_session import LessonSession
+    session = await db.get(LessonSession, session_id)
+    if not session:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Session not found"
+        )
+    return session
+
+
+async def require_session_access(
+    session_id: int,
+    current_user: CurrentUser,
+    db: DBSession
+):
+    """
+    Verify user has access to the session:
+    - Teachers: Must be the creator of the session
+    - Students: Must in the class assigned to the session
+    """
+    from app.models.lesson_session import LessonSession
+    
+    session = await db.get(LessonSession, session_id)
+    if not session:
+        raise HTTPException(status_code=404, detail="Session not found")
+
+    if current_user.role == UserRole.TEACHER:
+        if session.teacher_id != current_user.id:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Not authorized to access this session"
+            )
+    elif current_user.role == UserRole.STUDENT:
+        if session.class_id != current_user.class_id:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN, 
+                detail="Not your class session"
+            )
+    
+    return session
+
