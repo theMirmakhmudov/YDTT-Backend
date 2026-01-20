@@ -100,22 +100,22 @@ jobs:
 
       - name: 🚀 Deploy with Docker
         env:
-          HOST: ${{ secrets.SERVER_HOST }}
-          USER: ${{ secrets.SERVER_USER }}
-          DOMAIN: ${{ secrets.DOMAIN }}
+          HOST: ${{ secrets.HOST_IP }}
+          USER: ${{ secrets.HOST_USER }}
+          DOMAIN: ${{ secrets.API_DOMAIN }}
           SSL_EMAIL: ${{ secrets.SSL_EMAIL }}
           # Database
-          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          POSTGRES_USER: postgres
           POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+          POSTGRES_DB: ydtt_db
           # App secrets
           SECRET_KEY: ${{ secrets.SECRET_KEY }}
-          JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
-          MINIO_ROOT_USER: ${{ secrets.MINIO_ROOT_USER }}
-          MINIO_ROOT_PASSWORD: ${{ secrets.MINIO_ROOT_PASSWORD }}
+          JWT_SECRET_KEY: ${{ secrets.SECRET_KEY }}
+          MINIO_ROOT_USER: minio
+          MINIO_ROOT_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
           # Docker image
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          FIRST_SUPERUSER: ${{ secrets.FIRST_SUPERUSER }}
+          FIRST_SUPERUSER: admin@ydtt.uz
           FIRST_SUPERUSER_PASSWORD: ${{ secrets.FIRST_SUPERUSER_PASSWORD }}
         run: |
           set -e
