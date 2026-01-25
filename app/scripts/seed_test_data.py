@@ -47,6 +47,7 @@ async def seed_test_data():
             name="Toshkent 1-son Maktab",
             code="TSH001",
             region="Toshkent",
+            district="Yunusobod",
             director_name="Karimov Aziz Shavkatovich",
             capacity=500,
             address="Amir Temur ko'chasi, 15",
