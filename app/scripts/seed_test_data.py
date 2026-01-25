@@ -61,11 +61,11 @@ async def seed_test_data():
         # 2. Create Subjects
         print("\n📚 Creating subjects...")
         subjects_data = [
-            {"name": "Matematika", "description": "5-sinf matematika kursi"},
-            {"name": "Fizika", "description": "5-sinf fizika kursi"},
-            {"name": "Ingliz tili", "description": "Ingliz tili darslari"},
-            {"name": "Tarix", "description": "O'zbekiston tarixi"},
-            {"name": "Biologiya", "description": "Tirik organizmlar haqida fan"},
+            {"name": "Matematika", "code": "MATH", "description": "5-sinf matematika kursi"},
+            {"name": "Fizika", "code": "PHYS", "description": "5-sinf fizika kursi"},
+            {"name": "Ingliz tili", "code": "ENG", "description": "Ingliz tili darslari"},
+            {"name": "Tarix", "code": "HIST", "description": "O'zbekiston tarixi"},
+            {"name": "Biologiya", "code": "BIO", "description": "Tirik organizmlar haqida fan"},
         ]
         subjects = []
         for subj_data in subjects_data:
