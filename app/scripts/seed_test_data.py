@@ -78,8 +78,8 @@ async def seed_test_data():
         # 3. Create Classes
         print("\n🎓 Creating classes...")
         classes_data = [
-            {"name": "5-A", "grade": 5, "school_id": school.id},
-            {"name": "5-B", "grade": 5, "school_id": school.id},
+            {"name": "5-A", "grade": 5, "school_id": school.id, "academic_year": "2025-2026"},
+            {"name": "5-B", "grade": 5, "school_id": school.id, "academic_year": "2025-2026"},
         ]
         classes = []
         for class_data in classes_data:
