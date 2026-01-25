@@ -46,16 +46,23 @@ if [ ! -d "./data/certbot" ]; then
     chmod -R 755 ./data/certbot
 fi
 
-CERT_FILE="./data/certbot/conf/live/$DOMAIN/fullchain.pem"
-if [ ! -f "$CERT_FILE" ]; then
+# Check if ANY certificate exists for this domain (including -0001, -0002 variants)
+CERT_EXISTS=$(find ./data/certbot/conf/live -type d -name "${DOMAIN}*" 2>/dev/null | head -n 1)
+
+if [ -z "$CERT_EXISTS" ]; then
     echo "⚠️ SSL Certificates not found for $DOMAIN. Running initialization script..."
     echo "⏳ This may take a minute..."
     chmod +x init-letsencrypt.sh
-    # Run in non-interactive mode (though script acts non-interactively if data dir missing)
     ./init-letsencrypt.sh
     echo "✅ SSL Initialization passed."
 else
-    echo "✅ SSL Certificates found. Skipping initialization."
+    echo "✅ SSL Certificates found at: $CERT_EXISTS"
+    echo "Skipping SSL initialization (reusing existing certificate)."
+    
+    # Update nginx config to use the actual certificate path
+    CERT_DIR=$(basename "$CERT_EXISTS")
+    echo "📝 Updating nginx to use certificate: $CERT_DIR"
+    sed -i "s|/etc/letsencrypt/live/\${API_DOMAIN}|/etc/letsencrypt/live/$CERT_DIR|g" nginx.final.conf
 fi
 
 # 6. Run Database Migrations

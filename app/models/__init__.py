@@ -18,6 +18,23 @@ from app.models.lesson_session import LessonSession, LessonSessionStatus, Studen
 from app.models.session_attendance import SessionAttendance
 from app.models.whiteboard import WhiteboardEvent, WhiteboardEventType
 from app.models.session_material import SessionMaterial, MaterialAccess
+from app.models.ai_learning import (
+    AIPerformanceAnalysis,
+    AIImprovementPlan,
+    AITutorSession,
+    AIGeneratedPractice,
+)
+from app.models.curriculum import (
+    CurriculumTemplate,
+    CurriculumTopic,
+    CurriculumSubtopic,
+    AcademicYear,
+    Holiday,
+    SchoolEvent,
+    CurriculumSchedule,
+    ScheduledTopic,
+    ScheduledLesson,
+)
 
 __all__ = [
     # User
@@ -80,4 +97,19 @@ __all__ = [
     "WhiteboardEventType",
     "SessionMaterial",
     "MaterialAccess",
+    # AI Learning
+    "AIPerformanceAnalysis",
+    "AIImprovementPlan",
+    "AITutorSession",
+    "AIGeneratedPractice",
+    # Curriculum
+    "CurriculumTemplate",
+    "CurriculumTopic",
+    "CurriculumSubtopic",
+    "AcademicYear",
+    "Holiday",
+    "SchoolEvent",
+    "CurriculumSchedule",
+    "ScheduledTopic",
+    "ScheduledLesson",
 ]
