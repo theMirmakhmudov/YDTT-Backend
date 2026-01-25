@@ -40,9 +40,11 @@ echo "🔥 Starting services..."
 docker compose up -d --remove-orphans
 
 # 5. Check for SSL Certificates & Initialize if missing (First Run Automation)
-echo "📁 Ensuring certbot data directory exists with correct permissions..."
-mkdir -p ./data/certbot/conf ./data/certbot/www
-chmod -R 755 ./data/certbot
+if [ ! -d "./data/certbot" ]; then
+    echo "📁 Creating certbot data directory..."
+    mkdir -p ./data/certbot/conf ./data/certbot/www
+    chmod -R 755 ./data/certbot
+fi
 
 CERT_FILE="./data/certbot/conf/live/$DOMAIN/fullchain.pem"
 if [ ! -f "$CERT_FILE" ]; then
