@@ -27,8 +27,7 @@ fi
 
 echo "### Ensuring permissions for webroot ..."
 mkdir -p "$data_path/www"
-# Ensure everyone can read/traverse so Nginx (user 101) can find the challenge
-chmod -R 755 "$data_path/www"
+# Note: Skip chmod as directory may be owned by root from Docker containers
 
 echo "### Creating dummy certificate for $domains ..."
 path="/etc/letsencrypt/live/$domains"
