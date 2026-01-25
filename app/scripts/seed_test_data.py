@@ -204,15 +204,16 @@ async def seed_test_data():
         
         # 6. Create Timetable
         print("\n📅 Creating timetable...")
+        from datetime import time
         time_slots = []
-        start_times = ["08:00", "09:00", "10:00", "11:00", "12:00"]
+        start_times = [time(8, 0), time(9, 0), time(10, 0), time(11, 0), time(12, 0)]
         for i, start_time in enumerate(start_times, 1):
+            end_hour = start_time.hour + 1
             slot = TimeSlot(
                 school_id=school.id,
-                period_number=i,
+                order=i,
                 start_time=start_time,
-                end_time=f"{int(start_time.split(':')[0])+1}:00",
-                duration_minutes=45
+                end_time=time(end_hour, 0)
             )
             session.add(slot)
             time_slots.append(slot)
