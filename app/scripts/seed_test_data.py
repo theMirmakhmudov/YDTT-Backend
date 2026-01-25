@@ -45,6 +45,7 @@ async def seed_test_data():
         print("🏫 Creating school...")
         school = School(
             name="Toshkent 1-son Maktab",
+            code="TSH001",
             region="Toshkent",
             director_name="Karimov Aziz Shavkatovich",
             capacity=500,
