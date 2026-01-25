@@ -7,7 +7,7 @@ from typing import Optional
 from sqlalchemy import Column, Integer, String, Text, Date, DateTime, ForeignKey, JSON, Boolean, Float
 from sqlalchemy.orm import relationship
 
-from app.models.base import Base
+from app.core.database import Base
 
 
 class CurriculumTemplate(Base):

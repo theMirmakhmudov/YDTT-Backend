@@ -6,7 +6,7 @@ from typing import Optional, List, Dict
 from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey, JSON, Text
 from sqlalchemy.orm import relationship
 
-from app.models.base import Base
+from app.core.database import Base
 
 
 class AIPerformanceAnalysis(Base):
