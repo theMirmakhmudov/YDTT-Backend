@@ -46,8 +46,9 @@ if [ ! -d "./data/certbot" ]; then
     chmod -R 755 ./data/certbot
 fi
 
-# Check if ANY certificate exists for this domain (including -0001, -0002 variants)
-CERT_EXISTS=$(find ./data/certbot/conf/live -type d -name "${DOMAIN}*" 2>/dev/null | head -n 1)
+# Check if ANY certificate exists for this domain (check inside Docker volume)
+echo "🔍 Checking for existing SSL certificates..."
+CERT_EXISTS=$(docker compose run --rm --entrypoint "sh -c 'ls -d /etc/letsencrypt/live/${DOMAIN}* 2>/dev/null || true'" certbot)
 
 if [ -z "$CERT_EXISTS" ]; then
     echo "⚠️ SSL Certificates not found for $DOMAIN. Running initialization script..."
@@ -56,13 +57,18 @@ if [ -z "$CERT_EXISTS" ]; then
     ./init-letsencrypt.sh
     echo "✅ SSL Initialization passed."
 else
-    echo "✅ SSL Certificates found at: $CERT_EXISTS"
+    echo "✅ SSL Certificates found: $CERT_EXISTS"
     echo "Skipping SSL initialization (reusing existing certificate)."
     
+    # Extract just the directory name (e.g., "api.ydtt.uz-0001")
+    CERT_DIR=$(echo "$CERT_EXISTS" | xargs basename)
+    echo "📝 Certificate directory: $CERT_DIR"
+    
     # Update nginx config to use the actual certificate path
-    CERT_DIR=$(basename "$CERT_EXISTS")
-    echo "📝 Updating nginx to use certificate: $CERT_DIR"
-    sed -i "s|/etc/letsencrypt/live/\${API_DOMAIN}|/etc/letsencrypt/live/$CERT_DIR|g" nginx.final.conf
+    if [ "$CERT_DIR" != "$DOMAIN" ]; then
+        echo "📝 Updating nginx to use certificate: $CERT_DIR"
+        sed -i "s|/etc/letsencrypt/live/\${API_DOMAIN}|/etc/letsencrypt/live/$CERT_DIR|g" nginx.final.conf
+    fi
 fi
 
 # 6. Run Database Migrations
