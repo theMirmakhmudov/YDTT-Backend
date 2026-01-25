@@ -81,8 +81,11 @@ fi
 echo "### Deleting dummy certificate for $domains ..."
 docker compose run --rm --entrypoint "\
   rm -Rf /etc/letsencrypt/live/$domains && \
+  rm -Rf /etc/letsencrypt/live/${domains}-0001 && \
   rm -Rf /etc/letsencrypt/archive/$domains && \
-  rm -Rf /etc/letsencrypt/renewal/$domains.conf" certbot
+  rm -Rf /etc/letsencrypt/archive/${domains}-0001 && \
+  rm -Rf /etc/letsencrypt/renewal/$domains.conf && \
+  rm -Rf /etc/letsencrypt/renewal/${domains}-0001.conf" certbot
 echo
 
 
