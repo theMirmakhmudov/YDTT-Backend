@@ -53,6 +53,17 @@ class User(Base):
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     is_deleted: Mapped[bool] = mapped_column(Boolean, default=False)  # Soft delete
     
+    # Profile customization
+    profile_picture_url: Mapped[Optional[str]] = mapped_column(String(500), nullable=True)
+    bio: Mapped[Optional[str]] = mapped_column(String(500), nullable=True)
+    date_of_birth: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
+    gender: Mapped[Optional[str]] = mapped_column(String(10), nullable=True)  # "male", "female", "other"
+    
+    # Contact & Address
+    address: Mapped[Optional[str]] = mapped_column(String(500), nullable=True)
+    city: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
+    country: Mapped[str] = mapped_column(String(100), default="Uzbekistan")
+    
     # Preferences
     preferred_language: Mapped[str] = mapped_column(String(5), default="uz")
     
