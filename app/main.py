@@ -32,29 +32,31 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title=settings.APP_NAME,
     description="""
-## YDTT (Yagona Davlat Ta'lim Tizimi) - Unified State Education System
+## YDTT (Yagona Davlat Ta'lim Tizimi) - Yagona Davlat Ta'lim Tizimi
 
-Government-scale education platform backend providing:
-- **Authentication**: JWT-based with role-based access control (RBAC)
-- **User Management**: Students, teachers, and administrators
-- **School Structure**: Schools, classes, subjects organization
-- **Learning Content**: Lessons and materials with versioning
-- **Live Sessions**: Real-time digital classroom with WebSocket support
-- **Automatic Attendance**: Session-based attendance tracking
-- **Interactive Whiteboard**: Teacher-to-student real-time drawing
-- **Session Materials**: Auto-linked learning resources
-- **Exam System**: Automated assessment with multiple question types
-- **Anti-Cheating**: Event logging and risk scoring
-- **Offline Sync**: Offline-first data synchronization
-- **Analytics**: Progress tracking and dashboard metrics
-- **Audit Logging**: Immutable action logs
+Davlat miqyosidagi ta'lim platformasi backend quyidagilarni taqdim etadi:
 
-### Multilingual Support
-- 🇺🇿 Uzbek (uz) - Primary
-- 🇬🇧 English (en)
-- 🇷🇺 Russian (ru)
-- 🇰🇿 Kazakh (kk)
-- 🇰🇬 Kyrgyz (ky)
+- **Autentifikatsiya**: JWT asosida rol asosida kirish nazorati (RBAC)
+- **Foydalanuvchilarni boshqarish**: O'quvchilar, o'qituvchilar va administratorlar
+- **Maktab tuzilmasi**: Maktablar, sinflar, fanlar tashkil etish
+- **Ta'lim kontenti**: Darslar va materiallar versiyalash bilan
+- **Jonli darslar**: WebSocket qo'llab-quvvatlash bilan real vaqtda raqamli sinf xonasi
+- **Avtomatik davomat**: Sessiya asosida davomat kuzatish
+- **Interaktiv doska**: O'qituvchidan o'quvchiga real vaqtda chizish
+- **Sessiya materiallari**: Avtomatik bog'langan ta'lim resurslari
+- **Imtihon tizimi**: Ko'p savol turlari bilan avtomatlashtirilgan baholash
+- **Firibgarlikka qarshi**: Hodisalarni qayd etish va xavf baholash
+- **Oflayn sinxronizatsiya**: Oflayn-birinchi ma'lumotlar sinxronizatsiyasi
+- **Tahlillar**: Taraqqiyotni kuzatish va boshqaruv paneli ko'rsatkichlari
+- **Audit jurnali**: O'zgarmas harakat jurnallari
+- **Foydalanuvchi profili**: Profil rasmi va shaxsiy ma'lumotlarni sozlash
+- **AI o'qituvchi**: 24/7 uy vazifasi yordami va shaxsiylashtirilgan o'rganish
+- **O'quv dasturi boshqaruvi**: To'liq o'quv yili avtomatik rejalashtirish
+
+### Til qo'llab-quvvatlash
+- 🇺🇿 O'zbek (uz) - Asosiy
+- 🇬🇧 Ingliz (en)
+- 🇷🇺 Rus (ru)
     """,
     version=settings.APP_VERSION,
     openapi_url=f"{settings.API_V1_PREFIX}/openapi.json",
