@@ -228,6 +228,7 @@ async def seed_test_data():
                 teacher, subject = teachers[subject_idx]
                 
                 schedule = Schedule(
+                    school_id=school.id,
                     class_id=cls.id,
                     subject_id=subject.id,
                     teacher_id=teacher.id,
