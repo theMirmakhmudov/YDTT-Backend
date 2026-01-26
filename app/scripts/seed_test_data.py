@@ -240,118 +240,6 @@ async def seed_test_data():
         await session.flush()
         print("✅ Created timetable")
         
-        # 7. Create Lessons
-        print("\n📖 Creating lessons...")
-        for teacher, subject in teachers[:3]:  # First 3 teachers
-            for i in range(2):  # 2 lessons each
-                lesson = Lesson(
-                    title=f"{subject.name} - Dars {i+1}",
-                    description=f"{subject.name} bo'yicha {i+1}-dars",
-                    subject_id=subject.id,
-                    class_id=classes[0].id,
-                    teacher_id=teacher.id,
-                    scheduled_at=datetime.utcnow() + timedelta(days=i+1),
-                    duration_minutes=45,
-                    status="scheduled"
-                )
-                session.add(lesson)
-                
-                # Add material
-                material = Material(
-                    lesson_id=lesson.id,
-                    title=f"{subject.name} - Material {i+1}",
-                    description="Dars materiallari",
-                    material_type=MaterialType.DOCUMENT,
-                    file_url=f"/materials/{subject.name.lower()}_lesson{i+1}.pdf",
-                    file_size=1024000
-                )
-                session.add(material)
-        await session.flush()
-        print("✅ Created lessons with materials")
-        
-        # 8. Create Assignments
-        print("\n📝 Creating assignments...")
-        for teacher, subject in teachers[:3]:
-            assignment = Assignment(
-                title=f"{subject.name} - Uy vazifasi",
-                description=f"{subject.name} bo'yicha amaliy topshiriq",
-                subject_id=subject.id,
-                class_id=classes[0].id,
-                teacher_id=teacher.id,
-                assignment_type=AssignmentType.HOMEWORK,
-                due_date=datetime.utcnow() + timedelta(days=7),
-                max_score=100,
-                instructions="Topshiriqni bajarish bo'yicha ko'rsatmalar"
-            )
-            session.add(assignment)
-        await session.flush()
-        print("✅ Created assignments")
-        
-        # 9. Create Exams
-        print("\n📊 Creating exams...")
-        for teacher, subject in teachers[:2]:  # First 2 teachers
-            exam = Exam(
-                title=f"{subject.name} - Nazorat ishi",
-                description=f"{subject.name} bo'yicha choraklik nazorat",
-                subject_id=subject.id,
-                class_id=classes[0].id,
-                teacher_id=teacher.id,
-                exam_type=ExamType.MIDTERM,
-                scheduled_at=datetime.utcnow() + timedelta(days=14),
-                duration_minutes=90,
-                total_score=100,
-                passing_score=60
-            )
-            session.add(exam)
-            await session.flush()
-            
-            # Add questions
-            for i in range(5):
-                question = Question(
-                    exam_id=exam.id,
-                    question_text=f"{subject.name} - Savol {i+1}",
-                    question_type=QuestionType.MULTIPLE_CHOICE,
-                    options=["A) Variant 1", "B) Variant 2", "C) Variant 3", "D) Variant 4"],
-                    correct_answer="A",
-                    points=20,
-                    order_index=i
-                )
-                session.add(question)
-        await session.flush()
-        print("✅ Created exams with questions")
-        
-        # 10. Create Live Session
-        print("\n🎥 Creating live session...")
-        teacher, subject = teachers[0]
-        live_session = LessonSession(
-            title=f"{subject.name} - Jonli dars",
-            description="Interaktiv jonli dars",
-            subject_id=subject.id,
-            class_id=classes[0].id,
-            teacher_id=teacher.id,
-            scheduled_start=datetime.utcnow() + timedelta(hours=2),
-            scheduled_end=datetime.utcnow() + timedelta(hours=3),
-            status=LessonSessionStatus.SCHEDULED,
-            max_participants=30
-        )
-        session.add(live_session)
-        await session.flush()
-        print("✅ Created live session")
-        
-        # 11. Create Notifications
-        print("\n🔔 Creating notifications...")
-        for student in students[:3]:
-            notification = Notification(
-                user_id=student.id,
-                title="Xush kelibsiz!",
-                message="YDTT tizimiga xush kelibsiz. Barcha darslar va topshiriqlar tayyor.",
-                notification_type=NotificationType.SYSTEM,
-                priority=NotificationPriority.NORMAL
-            )
-            session.add(notification)
-        await session.flush()
-        print("✅ Created notifications")
-        
         # Commit all changes
         await session.commit()
         
@@ -363,10 +251,8 @@ async def seed_test_data():
         print(f"   🎓 Classes: {len(classes)}")
         print(f"   👨‍🏫 Teachers: {len(teachers)}")
         print(f"   👨‍🎓 Students: {len(students)}")
-        print(f"   📖 Lessons: 6")
-        print(f"   📝 Assignments: 3")
-        print(f"   📊 Exams: 2")
-        print(f"   🎥 Live Sessions: 1")
+        print(f"   📅 Time Slots: {len(time_slots)}")
+        print(f"   📋 Schedules: {len(classes) * len(days)}")
         
         print("\n🔑 Login Credentials:")
         print("\n   Teachers:")
