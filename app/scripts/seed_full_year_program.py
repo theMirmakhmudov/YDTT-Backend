@@ -234,19 +234,22 @@ async def seed_full_year():
                         session.add(lesson)
                         total_lessons += 1
                         
-                        # 20% Chance of Homework
-                        if random.random() < 0.2:
-                           hw = Assignment(
-                                title=f"HW: {topic} Practice",
-                                description=f"Complete the {topic} exercises. Use AI Tutor for help if stuck.",
-                                subject_id=t_data["subject"].id,
-                                class_id=cls.id,
-                                teacher_id=t_data["user"].id,
-                                assignment_type=AssignmentType.HOMEWORK,
-                                due_date=datetime.combine(curr_date + timedelta(days=2), time(23, 59)),
-                                max_score=100
-                            )
-                           session.add(hw)
+                        # 100% Chance of Homework (System Auto-Assign)
+                        # Rule: Homework appears automatically at 16:00 (After school ends)
+                        release_time = datetime.combine(curr_date, time(16, 0))
+                        
+                        hw = Assignment(
+                            title=f"HW: {topic} Practice",
+                            description=f"AI Generated exercises for {topic}. \n(System: Released automatically at 16:00)",
+                            subject_id=t_data["subject"].id,
+                            class_id=cls.id,
+                            teacher_id=t_data["user"].id,
+                            assignment_type=AssignmentType.HOMEWORK,
+                            created_at=release_time, # <--- CONTROLLED RELEASE TIME
+                            due_date=datetime.combine(curr_date + timedelta(days=1), time(23, 59)), # Next day midnight
+                            max_score=100
+                        )
+                        session.add(hw)
 
             # Flush periodically to avoid memory overflow
             if day_count % 30 == 0:
