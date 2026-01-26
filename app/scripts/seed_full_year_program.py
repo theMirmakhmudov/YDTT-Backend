@@ -220,16 +220,15 @@ async def seed_full_year():
                         
                         topic = skills[current_idx]
                         
-                        # Create Lesson
+                        # Create Lesson Content (Generic for the grade)
+                        # Note: In this system, 'Lesson' is the content curriculum, not the calendar event.
                         lesson = Lesson(
                             title=f"{t_data['subject'].code}: {topic}",
-                            description=f"AI Generated Lesson plan for {topic}. Focus on core concepts.",
+                            description=f"AI Generated Lesson plan for {topic}",
                             subject_id=t_data["subject"].id,
-                            class_id=cls.id,
-                            teacher_id=t_data["user"].id,
-                            scheduled_at=datetime.combine(curr_date, slot.start_time),
-                            duration_minutes=45,
-                            status="scheduled" if curr_date > date.today() else "completed"
+                            grade=cls.grade,
+                            created_by_id=t_data["user"].id,
+                            is_published=True
                         )
                         session.add(lesson)
                         total_lessons += 1
