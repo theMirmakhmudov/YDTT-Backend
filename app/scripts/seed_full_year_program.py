@@ -245,8 +245,7 @@ async def seed_full_year():
                             teacher_id=t_data["user"].id,
                             assignment_type=AssignmentType.HOMEWORK,
                             created_at=release_time, # <--- CONTROLLED RELEASE TIME
-                            due_date=datetime.combine(curr_date + timedelta(days=1), time(23, 59)), # Next day midnight
-                            max_score=100
+                            due_date=datetime.combine(curr_date + timedelta(days=1), time(23, 59)) # Next day midnight
                         )
                         session.add(hw)
 
